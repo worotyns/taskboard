@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yegor256/tacit@gh-pages/tacit-css-1.6.0.min.css"/>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="main.js?v=20240113_1"></script>
+    <style>
+      h1, h2, h3, h4, h5 {
+        color: #595959;
+      }
+    </style>
+    <title>what to do next?</title>
+  </head>
+
+  <body x-cloak x-data="app()" x-init="getAll()">
+    <section>
+        <h2 style="text-align: center; margin-top: auto;">what to do next?</h2>
+        <template x-for="(task, index) in tasks" :key="index">
+          <p>
+            [<span x-text="task.assigned"></span>] || 
+            [<span x-text="task.voters.length"></span> | <a @click="voteForTask(task.identity)">+</a> / <span x-text="task.creator"></span>@<span x-text="task.createdDate"></span>] 
+            <span x-text="task.description"></span>
+          </div>
+        </template>
+        <button @click="assignNextTaskToMe()">Assign me to task with top votes</button>
+        <hr/>
+        <input x-model="description"/>
+        <p x-text="description"></p>
+        <button @click="addNewTask(description)">Add task</button>
+    </section>
+  </body>
+</html>

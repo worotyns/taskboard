@@ -1,0 +1,7 @@
+.env
+fly.toml
+*.nomad
+.DS_Store
+data
+scripts
+.env

@@ -43,7 +43,14 @@ export class Task extends Atom<Task> {
     return message;
   }
 
+  public assertIsNotCompleted() {
+    if (this.completed) {
+      throw new Error("Task is already completed, cannot perform action.");
+    }
+  }
+
   vote(voter: string): string {
+    this.assertIsNotCompleted();
     if (!this.voters.includes(voter)) {
       this.voters.push(voter);
       return this.logAndReturn(`${voter} voted for task: ${this.identity}`);
@@ -53,6 +60,7 @@ export class Task extends Atom<Task> {
   }
 
   assign(assignee: string): string {
+    this.assertIsNotCompleted();
     if (this.assigned === null) {
       this.assignedAt = new Date();
       this.assigned = assignee;
@@ -63,6 +71,7 @@ export class Task extends Atom<Task> {
   }
 
   unassign(requestBy: string): string {
+    this.assertIsNotCompleted();
     if (this.assigned) {
       const assignee = this.assigned;
 
@@ -82,6 +91,7 @@ export class Task extends Atom<Task> {
   }
 
   markAsCompleted(requestedBy: string): string {
+    this.assertIsNotCompleted();
     if (this.creator === requestedBy || this.assigned === requestedBy) {
       this.completed = true;
       this.completedAt = new Date();

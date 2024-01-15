@@ -24,16 +24,34 @@ function app() {
       });
     },
     addNewTask(description) {
+      const confirmed = confirm("Are you sure?");
+      
+      if (!confirmed) {
+        return;
+      }
+
       api("/api/tasks", "POST", { description }).then(() => {
         this.getAll();
       });
     },
     archive(task) {
+      const confirmed = confirm("Are you sure you want to archive this task?");
+      
+      if (!confirmed) {
+        return;
+      }
+
       api(`/api/tasks/${task}`, "DELETE", {}).then(() => {
         this.getAll();
       });
     },
     markTaskAsCompletedTask(task) {
+      const confirmed = confirm("Are you sure you want to mark this task as completed?");
+      
+      if (!confirmed) {
+        return;
+      }
+
       api(`/api/tasks/${task}/complete`, "PUT", {}).then(() => {
         return this.getAll();
       });

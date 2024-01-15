@@ -119,8 +119,8 @@
         <div class="list-item">
           <span class="date"><span x-text="date(task.createdAt) + ' | ' + timeAgo(task.createdAt)"></span></span>
           <span class="upvote">
-            <span class="click" x-show="task.completed && auth === task.creator" @click="archive(task.identity)">🗃️</span>
-            <span class="click" x-show="!task.completed && auth === task.creator" @click="markTaskAsCompletedTask(task.identity)">✔️</span>
+            <span class="click" x-show="auth === task.creator" @click="archive(task.identity)">🗃️</span>
+            <span class="click" x-show="task.assigned && !task.completed && auth === task.creator" @click="markTaskAsCompletedTask(task.identity)">✔️</span>
             votes: <span class="votes">
               <span x-text="task.voters.length"></span>
             </span>

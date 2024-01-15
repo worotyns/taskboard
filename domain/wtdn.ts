@@ -68,7 +68,7 @@ export class WhatToDoNext extends Atom<WhatToDoNext> {
 
   getTasks(): Task[] {
     return WhatToDoNext.orderByCompleted(
-      WhatToDoNext.orderByVotes(this.tasks)
+      WhatToDoNext.orderByVotes(this.tasks),
     );
   }
 

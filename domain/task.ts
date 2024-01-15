@@ -15,7 +15,7 @@ export class Task extends Atom<Task> {
       creator: creator,
       voters: [],
       completed: false,
-      log: []
+      log: [],
     });
   }
 
@@ -26,7 +26,7 @@ export class Task extends Atom<Task> {
 
   public createdAt: Date = new Date();
   public assigned: string | null = null;
-  
+
   public creator = "";
 
   public voters: string[] = [];
@@ -38,7 +38,7 @@ export class Task extends Atom<Task> {
     this.log.push({ when: new Date(), message });
   }
 
-  private logAndReturn(message: string) { 
+  private logAndReturn(message: string) {
     this.appendToLog(message);
     return message;
   }
@@ -64,7 +64,9 @@ export class Task extends Atom<Task> {
     if (this.assigned === null) {
       this.assignedAt = new Date();
       this.assigned = assignee;
-      return this.logAndReturn(`${assignee} assigned to task: ${this.identity}`);
+      return this.logAndReturn(
+        `${assignee} assigned to task: ${this.identity}`,
+      );
     } else {
       throw new Error(`Task "${this.identity}" already assigned.`);
     }
@@ -78,13 +80,17 @@ export class Task extends Atom<Task> {
       const isAssignee = this.assigned === requestBy;
       const isCreator = this.creator === requestBy;
 
-      if (!isAssignee || !isCreator) { 
-        throw new Error(`Only the assignee (${this.assigned}) or creator (${this.creator}) can unassign from this task.`);
+      if (!isAssignee || !isCreator) {
+        throw new Error(
+          `Only the assignee (${this.assigned}) or creator (${this.creator}) can unassign from this task.`,
+        );
       }
 
       this.assignedAt = null;
       this.assigned = null;
-      return this.logAndReturn(`${assignee} unassigned from task: ${this.identity}`);
+      return this.logAndReturn(
+        `${assignee} unassigned from task: ${this.identity}`,
+      );
     } else {
       throw new Error(`Task "${this.identity}" already unassigned.`);
     }
@@ -95,7 +101,9 @@ export class Task extends Atom<Task> {
     if (this.creator === requestedBy || this.assigned === requestedBy) {
       this.completed = true;
       this.completedAt = new Date();
-      return this.logAndReturn(`Task "${this.identity}" marked as completed by ${requestedBy}`);
+      return this.logAndReturn(
+        `Task "${this.identity}" marked as completed by ${requestedBy}`,
+      );
     } else {
       throw new Error(
         `Only the creator (${this.creator}) can mark this task as completed.`,
@@ -106,9 +114,13 @@ export class Task extends Atom<Task> {
   static deserialize(rawValue: PropertiesOnly<Task>) {
     return Object.assign(
       new Task(),
-      { ...rawValue, 
-        createdAt: new Date(rawValue.createdAt), 
-        log: (rawValue.log || []).map((l) => ({ ...l, when: new Date(l.when) })) 
+      {
+        ...rawValue,
+        createdAt: new Date(rawValue.createdAt),
+        log: (rawValue.log || []).map((l) => ({
+          ...l,
+          when: new Date(l.when),
+        })),
       },
     );
   }

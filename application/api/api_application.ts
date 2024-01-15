@@ -13,7 +13,7 @@ export function createApiApplication(
   app.use(async (ctx, next) => {
     try {
       await next();
-    } catch(error) {
+    } catch (error) {
       ctx.response.headers.set("Content-Type", "text/plain");
       ctx.response.status = 500;
       ctx.response.body = error.message;

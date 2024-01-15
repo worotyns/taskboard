@@ -23,15 +23,15 @@ export function createRouter(
   const assertIsNotAnonymous = (resolvedUser: string, context: Context) => {
     if (resolvedUser === "anonymous") {
       context.response.status = 403;
-      context.response.body = "Cannot perform action as anonymous user."; 
+      context.response.body = "Cannot perform action as anonymous user.";
       throw new Error("Cannot perform action as anonymous user.");
     }
   };
 
-  const resolveUserAndSetResponseHeader = (context: Context) => {
-    const cfHeader = context.request.headers.get("CF_Authorization");
+  const resolveUserAndSetResponseHeader = async (context: Context) => {
+    const cfHeader = await context.cookies.get("CF_Authorization");
     const [_alg, content, _sig] = cfHeader?.split(".") || [];
-    
+
     let actAsUser = "anonymous";
 
     if (content) {
@@ -39,7 +39,7 @@ export function createRouter(
       if (decoded.startsWith("{")) {
         const parsed = JSON.parse(decoded);
         // Without any validation of signature, just a internal app..
-        actAsUser = parsed.email || actAsUser;  
+        actAsUser = parsed.email || actAsUser;
       }
     }
 
@@ -58,7 +58,7 @@ export function createRouter(
       context.response.status = 200;
     })
     .post("/api/tasks", async (context) => {
-      const user = resolveUserAndSetResponseHeader(context);
+      const user = await resolveUserAndSetResponseHeader(context);
       assertIsNotAnonymous(user, context);
       const body = await context.request.body({ type: "json" }).value;
 
@@ -68,38 +68,38 @@ export function createRouter(
 
       context.response.status = 200;
     })
-    .get("/api/tasks/assign", (context) => {
-      const user = resolveUserAndSetResponseHeader(context);
+    .get("/api/tasks/assign", async (context) => {
+      const user = await resolveUserAndSetResponseHeader(context);
       assertIsNotAnonymous(user, context);
 
       board.assignToFirstWithHighVotesUnassigned(user);
       context.response.status = 200;
     })
-    .delete("/api/tasks/:identity/unassign", (context) => {
-      const user = resolveUserAndSetResponseHeader(context);
+    .delete("/api/tasks/:identity/unassign", async (context) => {
+      const user = await resolveUserAndSetResponseHeader(context);
       assertIsNotAnonymous(user, context);
 
       const task = board.getTask(context.params.identity);
       task.unassign(user);
       context.response.status = 200;
     })
-    .delete("/api/tasks/:identity", (context) => {
-      const user = resolveUserAndSetResponseHeader(context);
+    .delete("/api/tasks/:identity", async (context) => {
+      const user = await resolveUserAndSetResponseHeader(context);
       assertIsNotAnonymous(user, context);
 
       board.archiveTask(board.getTask(context.params.identity));
       context.response.status = 200;
     })
-    .put("/api/tasks/:identity/complete", (context) => {
-      const user = resolveUserAndSetResponseHeader(context);
+    .put("/api/tasks/:identity/complete", async (context) => {
+      const user = await resolveUserAndSetResponseHeader(context);
       assertIsNotAnonymous(user, context);
 
       const task = board.getTask(context.params.identity);
       task.markAsCompleted(user);
       context.response.status = 200;
     })
-    .put("/api/tasks/:identity/vote", (context) => {
-      const user = resolveUserAndSetResponseHeader(context);
+    .put("/api/tasks/:identity/vote", async (context) => {
+      const user = await resolveUserAndSetResponseHeader(context);
       assertIsNotAnonymous(user, context);
 
       const task = board.getTask(context.params.identity);

@@ -10,7 +10,7 @@ interface BoardStats {
 
 export class BoardViewDto {
   public tasks: PropertiesOnly<Task>[];
-  
+
   public stats: BoardStats = {
     total: 0,
     archived: 0,

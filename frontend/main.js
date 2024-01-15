@@ -25,7 +25,7 @@ function app() {
     },
     addNewTask(description) {
       const confirmed = confirm("Are you sure?");
-      
+
       if (!confirmed) {
         return;
       }
@@ -36,7 +36,7 @@ function app() {
     },
     archive(task) {
       const confirmed = confirm("Are you sure you want to archive this task?");
-      
+
       if (!confirmed) {
         return;
       }
@@ -46,8 +46,10 @@ function app() {
       });
     },
     markTaskAsCompletedTask(task) {
-      const confirmed = confirm("Are you sure you want to mark this task as completed?");
-      
+      const confirmed = confirm(
+        "Are you sure you want to mark this task as completed?",
+      );
+
       if (!confirmed) {
         return;
       }
@@ -62,8 +64,10 @@ function app() {
       });
     },
     unassignFromTask(task) {
-      const confirmed = confirm("Are you sure you want to unassign yourself from this task?");
-      
+      const confirmed = confirm(
+        "Are you sure you want to unassign yourself from this task?",
+      );
+
       if (!confirmed) {
         return;
       }
@@ -81,7 +85,6 @@ function app() {
 }
 
 async function api(url, method, data) {
-
   const response = await fetch(url, {
     method: method,
     headers: { "Content-Type": "application/json" },
@@ -89,7 +92,7 @@ async function api(url, method, data) {
   });
 
   if (!response.ok) {
-    alert(await response.text())
+    alert(await response.text());
     return null;
   }
 
@@ -109,9 +112,9 @@ function date(date) {
 }
 
 function copy(text) {
-   navigator.clipboard.writeText(text);
-   alert("Copied the text: " + text);
-};
+  navigator.clipboard.writeText(text);
+  alert("Copied the text: " + text);
+}
 
 function seconds(diffTime) {
   return Math.floor(diffTime / 1000);

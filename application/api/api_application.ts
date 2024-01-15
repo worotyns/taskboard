@@ -5,9 +5,10 @@ import { createRouter } from "./router.ts";
 export function createApiApplication(
   board: WhatToDoNext,
   healthCallback: () => [string, boolean],
+  persistCallback: () => Promise<void>,
 ): Application {
   const app = new Application();
-  const router = createRouter(board, healthCallback);
+  const router = createRouter(board, healthCallback, persistCallback);
   const ROOT_DIR = "./frontend";
 
   app.use(async (ctx, next) => {

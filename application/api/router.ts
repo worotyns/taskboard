@@ -6,6 +6,7 @@ import { Task } from "../../domain/task.ts";
 export function createRouter(
   board: WhatToDoNext,
   healthCallback: () => [string, boolean],
+  persistCallback: () => Promise<void>,
 ): Router {
   const router = new Router();
 
@@ -74,6 +75,7 @@ export function createRouter(
 
       board.assignToFirstWithHighVotesUnassigned(user);
       context.response.status = 200;
+      await persistCallback();
     })
     .delete("/api/tasks/:identity/unassign", async (context) => {
       const user = await resolveUserAndSetResponseHeader(context);
@@ -82,6 +84,7 @@ export function createRouter(
       const task = board.getTask(context.params.identity);
       task.unassign(user);
       context.response.status = 200;
+      await persistCallback();
     })
     .delete("/api/tasks/:identity", async (context) => {
       const user = await resolveUserAndSetResponseHeader(context);
@@ -89,6 +92,7 @@ export function createRouter(
 
       board.archiveTask(board.getTask(context.params.identity));
       context.response.status = 200;
+      await persistCallback();
     })
     .put("/api/tasks/:identity/complete", async (context) => {
       const user = await resolveUserAndSetResponseHeader(context);
@@ -97,6 +101,7 @@ export function createRouter(
       const task = board.getTask(context.params.identity);
       task.markAsCompleted(user);
       context.response.status = 200;
+      await persistCallback();
     })
     .put("/api/tasks/:identity/vote", async (context) => {
       const user = await resolveUserAndSetResponseHeader(context);
@@ -105,6 +110,7 @@ export function createRouter(
       const task = board.getTask(context.params.identity);
       task.vote(user);
       context.response.status = 200;
+      await persistCallback();
     });
 
   return router;

@@ -1,9 +1,9 @@
 import { Application, send } from "oak";
-import { Board } from "../../domain/board.ts";
+import { WhatToDoNext } from "../../domain/wtdn.ts";
 import { createRouter } from "./router.ts";
 
 export function createApiApplication(
-  board: Board,
+  board: WhatToDoNext,
   healthCallback: () => [string, boolean],
 ): Application {
   const app = new Application();

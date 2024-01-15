@@ -1,12 +1,12 @@
 import { assertEquals, assertRejects, assertThrows } from "asserts";
-import { Board } from "./board.ts";
+import { WhatToDoNext } from "./wtdn.ts";
 import { Task } from "./task.ts";
 import { createMemory } from "atoms";
 
 Deno.test("Board test", async function () {
   const { persist, restore, data } = createMemory();
 
-  const board = new Board();
+  const board = new WhatToDoNext();
 
   const task1 = Task.create("Task 1", "Creator1");
 
@@ -32,7 +32,7 @@ Deno.test("Board test", async function () {
 
   await persist(board);
 
-  const restored = await restore(board.identity, Board);
+  const restored = await restore(board.identity, WhatToDoNext);
 
   assertEquals(restored.getTasks().length, 1);
   assertEquals(restored.getTasks()[0].voters.length, 2);

@@ -1,13 +1,13 @@
 import { Atom, PropertiesOnly } from "atoms";
 import { Task } from "./task.ts";
 
-export class Board extends Atom<Board> {
+export class WhatToDoNext extends Atom<WhatToDoNext> {
   static first(tasks: Task[]): Task | undefined {
     return tasks[0];
   }
 
-  static createWithIdentity(identity: string): Board {
-    return Object.assign(new Board(), { identity });
+  static createWithIdentity(identity: string): WhatToDoNext {
+    return Object.assign(new WhatToDoNext(), { identity });
   }
 
   static orderByVotes(tasks: Task[]): Task[] {
@@ -41,9 +41,9 @@ export class Board extends Atom<Board> {
       return b.voters.length - a.voters.length;
     });
 
-    const firstUnassigned = Board.first(
-      Board.orderByVotes(
-        Board.filterUnassigned(orderedByVotes),
+    const firstUnassigned = WhatToDoNext.first(
+      WhatToDoNext.orderByVotes(
+        WhatToDoNext.filterUnassigned(orderedByVotes),
       ),
     );
 
@@ -55,7 +55,7 @@ export class Board extends Atom<Board> {
   }
 
   getTasks(): Task[] {
-    return Board.orderByVotes(this.tasks);
+    return WhatToDoNext.orderByVotes(this.tasks);
   }
 
   getTask(identity: string): Task {
@@ -69,12 +69,12 @@ export class Board extends Atom<Board> {
   }
 
   getAssignedTasks(): Task[] {
-    return Board.filterAssigned(Board.orderByVotes(this.tasks));
+    return WhatToDoNext.filterAssigned(WhatToDoNext.orderByVotes(this.tasks));
   }
 
-  static deserialize(rawValue: PropertiesOnly<Board>) {
+  static deserialize(rawValue: PropertiesOnly<WhatToDoNext>) {
     return Object.assign(
-      new Board(),
+      new WhatToDoNext(),
       rawValue,
       {
         tasks: rawValue.tasks.map((task: PropertiesOnly<Task>) =>

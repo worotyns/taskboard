@@ -3,7 +3,7 @@
 <head>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yegor256/tacit@gh-pages/tacit-css-1.6.0.min.css" />
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-  <script src="main.js?v=20240113_1"></script>
+  <script src="main.js?v=20240115_1"></script>
   <style>
     h1,
     h2,
@@ -54,6 +54,11 @@
       font-size: 12px;
     }
 
+    .upvote .votes {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
     .divider {
       color: #595959;
       font-size: 12px;
@@ -101,23 +106,28 @@
       total: <span x-text="stats.total"></span>, 
       completed: <span x-text="stats.completed"></span>, 
       inprogress: <span x-text="stats.inprogress"></span>,
-      auth as: <span x-text="auth"></span>
+      act as: <span x-text="auth"></span>
     </p>
 
     <template x-for="(task, index) in tasks" :key="index">
       <div class="task-list">
         <div class="list-item">
-          <span class="date"><span x-text="date(task.createdDate)"></span></span>
+          <span class="date"><span x-text="date(task.createdAt) + ' | ' + timeAgo(task.createdAt)"></span></span>
           <span class="upvote">
             <span class="click" x-show="task.completed && auth === task.creator" @click="archive(task.identity)">🗃️</span>
-            <span class="click" x-show="!task.completed && auth === task.assigned" @click="markTaskAsCompletedTask(task.identity)">✔️</span>
+            <span class="click" x-show="!task.completed && auth === task.creator" @click="markTaskAsCompletedTask(task.identity)">✔️</span>
+            votes: <span class="votes">
+              <span x-text="task.voters.length"></span>
+            </span>
             <span class="click" x-show="!task.voters.includes(auth)" @click="voteForTask(task.identity)">➕</span>
           </span>
           <pre x-text="task.description"></pre>
           <div class="assignee-info">
             authored by: <span x-text="task.creator"></span>, 
-            votes: <span x-text="task.voters.length"></span>, 
-            assigned to: <span x-text="task.assigned || 'unassigned'"></span><span class="click" x-show="(auth === task.creator || auth === task.assigneed) && task.assigned" @click="unassignFromTask(task.identity)">💨</span></div>
+            assigned to: <span x-text="task.assigned || 'unassigned'"></span><span class="click" x-show="(auth === task.creator || auth === task.assigneed) && task.assigned" @click="unassignFromTask(task.identity)">💨</span><span x-show="task.assigned"> in <span x-text="duration(seconds(diff(task.createdAt, task.assignedAt)))"></span></span>
+            <span x-show="task.completed"> and completed in <span x-text="duration(seconds(diff(task.assignedAt, task.completedAt)))"></span></span>
+            <span x-show="task.assigned"> and is in progress since <span x-text="duration(seconds(diff(task.assignedAt, new Date())))"></span></span>
+          </div>
           <div class="identity-info">#<span x-text="task.identity"></span><span class="click" @click="copy(task.identity)">📋</span></div>
         </div>
       </div>

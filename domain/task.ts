@@ -9,7 +9,9 @@ export class Task extends Atom<Task> {
   static create(description: string, creator: string) {
     return Object.assign(new Task(), {
       description: description,
-      createdDate: new Date(),
+      createdAt: new Date(),
+      completedAt: null,
+      assignedAt: null,
       creator: creator,
       voters: [],
       completed: false,
@@ -22,7 +24,7 @@ export class Task extends Atom<Task> {
   public assignedAt: Date | null = null;
   public completedAt: Date | null = null;
 
-  public createdDate: Date = new Date();
+  public createdAt: Date = new Date();
   public assigned: string | null = null;
   
   public creator = "";
@@ -95,7 +97,7 @@ export class Task extends Atom<Task> {
     return Object.assign(
       new Task(),
       { ...rawValue, 
-        createdDate: new Date(rawValue.createdDate), 
+        createdAt: new Date(rawValue.createdAt), 
         log: (rawValue.log || []).map((l) => ({ ...l, when: new Date(l.when) })) 
       },
     );

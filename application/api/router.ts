@@ -1,10 +1,10 @@
 import { Context, Router } from "oak";
-import { Board } from "../../domain/board.ts";
+import { WhatToDoNext } from "../../domain/wtdn.ts";
 import { BoardViewDto } from "./dtos/board_dto.ts";
 import { Task } from "../../domain/task.ts";
 
 export function createRouter(
-  board: Board,
+  board: WhatToDoNext,
   healthCallback: () => [string, boolean],
 ): Router {
   const router = new Router();

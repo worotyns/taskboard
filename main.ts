@@ -3,7 +3,7 @@ import { createApiApplication } from "./application/api/api_application.ts";
 import { ProcessManager } from "./application/process_manager.ts";
 import { createLogger } from "./application/logger.ts";
 import { createFs } from "atoms";
-import { Board } from "./domain/board.ts";
+import { WhatToDoNext } from "./domain/wtdn.ts";
 
 const logger = createLogger();
 await load({ export: true, allowEmptyValues: true });
@@ -15,13 +15,13 @@ logger.info(`Entrypoint is: ${entrypoint}, path: ${path}`);
 
 const { persist, restore } = createFs(path);
 
-let board: Board;
+let board: WhatToDoNext;
 
 try {
-  board = await restore(entrypoint, Board);
+  board = await restore(entrypoint, WhatToDoNext);
 } catch (error) {
   if (error instanceof Deno.errors.NotFound) {
-    board = Board.createWithIdentity(entrypoint);
+    board = WhatToDoNext.createWithIdentity(entrypoint);
     logger.info("File not found, start fresh instance: " + entrypoint);
   } else {
     logger.error(error);

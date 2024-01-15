@@ -16,6 +16,18 @@ export class WhatToDoNext extends Atom<WhatToDoNext> {
     });
   }
 
+  static orderByCompleted(tasks: Task[]): Task[] {
+    return tasks.sort((a, b) => {
+      if (a.completed && !b.completed) {
+        return 1;
+      } else if (!a.completed && b.completed) {
+        return -1;
+      } else {
+        return 0;
+      }
+    });
+  }
+
   static filterUnassigned(tasks: Task[]): Task[] {
     return tasks.filter((task) => task.assigned === null);
   }
@@ -55,7 +67,9 @@ export class WhatToDoNext extends Atom<WhatToDoNext> {
   }
 
   getTasks(): Task[] {
-    return WhatToDoNext.orderByVotes(this.tasks);
+    return WhatToDoNext.orderByCompleted(
+      WhatToDoNext.orderByVotes(this.tasks)
+    );
   }
 
   getTask(identity: string): Task {

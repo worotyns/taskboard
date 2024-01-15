@@ -95,6 +95,10 @@
       width: 100%;
       display: inline-block;
     }
+
+    .strike {
+      text-decoration: line-through
+    }
   </style>
   <title>what to do next?</title>
 </head>
@@ -122,12 +126,12 @@
             </span>
             <span class="click" x-show="!task.voters.includes(auth)" @click="voteForTask(task.identity)">➕</span>
           </span>
-          <pre x-text="task.description"></pre>
+          <pre :class="task.completed ? 'strike' : ''" x-text="task.description"></pre>
           <div class="assignee-info">
             authored by: <span x-text="task.creator"></span>, 
             assigned to: <span x-text="task.assigned || 'unassigned'"></span><span class="click" x-show="(auth === task.creator || auth === task.assigneed) && task.assigned" @click="unassignFromTask(task.identity)">💨</span><span x-show="task.assigned"> in <span x-text="duration(seconds(diff(task.createdAt, task.assignedAt)))"></span></span>
             <span x-show="task.completed"> and completed in <span x-text="duration(seconds(diff(task.assignedAt, task.completedAt)))"></span></span>
-            <span x-show="task.assigned"> and is in progress since <span x-text="duration(seconds(diff(task.assignedAt, new Date())))"></span></span>
+            <span x-show="!task.completed && task.assigned"> and is in progress since <span x-text="duration(seconds(diff(task.assignedAt, new Date())))"></span></span>
           </div>
           <div class="identity-info">#<span x-text="task.identity"></span><span class="click" @click="copy(task.identity)">📋</span></div>
         </div>

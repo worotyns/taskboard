@@ -29,9 +29,11 @@ try {
   }
 }
 
-const app = createApiApplication(wtdn, () => {
-  return ["Hello!", true];
-});
+const app = createApiApplication(
+  wtdn, 
+  () => ["Hello!", true],
+  () => persist(wtdn)
+);
 
 const persistInterval = ~~(Deno.env.get("ATOMS_PERSIST_INTERVAL") || "300_000");
 

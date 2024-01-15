@@ -52,6 +52,7 @@ export function createRouter(
       resolveUserAndSetResponseHeader(context);
       context.response.body = new BoardViewDto(
         board.getTasks(),
+        board.archive,
       );
       context.response.headers.set("Content-Type", "application/json");
       context.response.status = 200;

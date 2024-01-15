@@ -12,10 +12,15 @@ function debounce(func, wait = 750) {
 function app() {
   return {
     description: "",
+    auth: "unauthorized",
     tasks: [],
+    stats: {},
     getAll() {
-      api("/api/tasks", "GET").then((resp) => {
+      api("/api/tasks", "GET").then((response) => {
+        const [resp, headers] = response;
+        this.auth = headers.get("x-user") || "unauthorized";
         this.tasks = resp.tasks;
+        this.stats = resp.stats;
       });
     },
     addNewTask(description) {
@@ -38,6 +43,17 @@ function app() {
         return this.getAll();
       });
     },
+    unassignFromTask(task) {
+      const confirmed = confirm("Are you sure you want to unassign yourself from this task?");
+      
+      if (!confirmed) {
+        return;
+      }
+
+      api(`/api/tasks/${task}/unassign`, "DELETE", {}).then(() => {
+        return this.getAll();
+      });
+    },
     assignNextTaskToMe() {
       api("/api/tasks/assign", "GET").then(() => {
         return this.getAll();
@@ -47,12 +63,10 @@ function app() {
 }
 
 async function api(url, method, data) {
-  
-  console.log({url, method, data});
 
   const response = await fetch(url, {
     method: method,
-    headers: { "Content-Type": "application/json", "X-User": 'mati' },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
 
@@ -63,13 +77,20 @@ async function api(url, method, data) {
 
   if (response.headers.get("Content-Type") === "application/json") {
     const resp = await response.json();
-    console.log({resp});
-    return resp;  
+    return [resp, response.headers];
   } else if (response.headers.get("Content-Type") === "text/plain") {
-    const resp  = response.text();
-    console.log({resp});
-    return resp;
+    const resp = response.text();
+    return [resp, response.headers];
   } else {
     return null;
   }
 }
+
+function date(date) {
+  return new Date(date).toLocaleString();
+}
+
+function copy(text) {
+   navigator.clipboard.writeText(text);
+   alert("Copied the text: " + text);
+};

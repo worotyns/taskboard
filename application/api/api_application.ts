@@ -19,6 +19,7 @@ export function createApiApplication(
       ctx.response.body = error.message;
     }
   });
+
   app.use(router.routes());
   app.use(router.allowedMethods());
   app.use(async (ctx, next) => {

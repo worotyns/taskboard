@@ -1,31 +1,135 @@
 <html>
-  <head>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yegor256/tacit@gh-pages/tacit-css-1.6.0.min.css"/>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script src="main.js?v=20240113_1"></script>
-    <style>
-      h1, h2, h3, h4, h5 {
-        color: #595959;
-      }
-    </style>
-    <title>what to do next?</title>
-  </head>
 
-  <body x-cloak x-data="app()" x-init="getAll()">
-    <section>
-        <h2 style="text-align: center; margin-top: auto;">what to do next?</h2>
-        <template x-for="(task, index) in tasks" :key="index">
-          <p>
-            [<span x-text="task.assigned"></span>] || 
-            [<span x-text="task.voters.length"></span> | <a @click="voteForTask(task.identity)">+</a> / <span x-text="task.creator"></span>@<span x-text="task.createdDate"></span>] 
-            <span x-text="task.description"></span>
-          </div>
-        </template>
-        <button @click="assignNextTaskToMe()">Assign me to task with top votes</button>
-        <hr/>
-        <input x-model="description"/>
-        <p x-text="description"></p>
-        <button @click="addNewTask(description)">Add task</button>
-    </section>
-  </body>
+<head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yegor256/tacit@gh-pages/tacit-css-1.6.0.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="main.js?v=20240113_1"></script>
+  <style>
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    input, button {
+      color: #424242;
+    }
+
+    textarea {
+      min-width: 100%;
+      width: 100%;
+      min-height: 150px;
+      height: auto;
+      color: #424242;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    
+    a, .click {
+      cursor: pointer;
+    }
+
+    .task-list pre {
+      color: #424242;
+      padding: 0px;
+      margin: 0;
+      padding-top: 30px;
+    }
+
+    .list-item {
+      color: #595959;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 10px;
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .upvote {
+      position: absolute;
+      top: 5px;
+      right: 10px;
+      font-size: 12px;
+    }
+
+    .divider {
+      color: #595959;
+      font-size: 12px;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    .date {
+      position: absolute;
+      top: 5px;
+      left: 10px;
+      font-size: 12px;
+    }
+
+    .assignee-info {
+      font-size: 12px;
+      margin-top: 10px;
+    }
+
+    .identity-info {
+      position: absolute;
+      bottom: 5px;
+      right: 10px;
+      font-size: 12px;
+    }
+
+    .assign {
+      width: 100%;
+      min-width: 100%;
+    }
+
+    .add-task {
+      width: 100%;
+      display: inline-block;
+    }
+  </style>
+  <title>what to do next?</title>
+</head>
+
+<body x-cloak x-data="app()" x-init="getAll()">
+  <section>
+    <h2 style="text-align: center; margin-top: auto;">what to do next?</h2>
+    <p class="divider">
+      total: <span x-text="stats.total"></span>, 
+      completed: <span x-text="stats.completed"></span>, 
+      inprogress: <span x-text="stats.inprogress"></span>,
+      auth as: <span x-text="auth"></span>
+    </p>
+
+
+    <template x-for="(task, index) in tasks" :key="index">
+      <div class="task-list">
+        <div class="list-item">
+          <span class="date"><span x-text="date(task.createdDate)"></span></span>
+          <span class="upvote">
+            <span class="click" x-show="task.completed && auth === task.creator" @click="archive(task.identity)">🗃️</span>
+            <span class="click" x-show="!task.completed && auth === task.assigned" @click="markTaskAsCompletedTask(task.identity)">✔️</span>
+            <span class="click" x-show="!task.voters.includes(auth)" @click="voteForTask(task.identity)">➕</span>
+          </span>
+          <pre x-text="task.description"></pre>
+          <div class="assignee-info">
+            authored by: <span x-text="task.creator"></span>, 
+            votes: <span x-text="task.voters.length"></span>, 
+            assigned to: <span x-text="task.assigned || 'unassigned'"></span><span class="click" x-show="(auth === task.creator || auth === task.assigneed) && task.assigned" @click="unassignFromTask(task.identity)">💨</span></div>
+          <div class="identity-info">#<span x-text="task.identity"></span><span class="click" @click="copy(task.identity)">📋</span></div>
+        </div>
+      </div>
+    </template>
+    <button class="assign" @click="assignNextTaskToMe()">assign me to unassigned task with top votes</button>
+    <p class="divider">or create new one</p>
+    <div class="add-task">
+      <textarea x-model="description"></textarea>
+      <button class="assign" @click="addNewTask(description)">create new task</button>
+    </div>
+  </section>
+</body>
+
 </html>

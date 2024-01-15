@@ -8,20 +8,20 @@ import { WhatToDoNext } from "./domain/wtdn.ts";
 const logger = createLogger();
 await load({ export: true, allowEmptyValues: true });
 
-const entrypoint: string = Deno.env.get("ATOMS_ENTRYPOINT") || "board_prod";
+const entrypoint: string = Deno.env.get("ATOMS_ENTRYPOINT") || "wtdn_prod";
 const path: string = Deno.env.get("ATOMS_PATH")!;
 
 logger.info(`Entrypoint is: ${entrypoint}, path: ${path}`);
 
 const { persist, restore } = createFs(path);
 
-let board: WhatToDoNext;
+let wtdn: WhatToDoNext;
 
 try {
-  board = await restore(entrypoint, WhatToDoNext);
+  wtdn = await restore(entrypoint, WhatToDoNext);
 } catch (error) {
   if (error instanceof Deno.errors.NotFound) {
-    board = WhatToDoNext.createWithIdentity(entrypoint);
+    wtdn = WhatToDoNext.createWithIdentity(entrypoint);
     logger.info("File not found, start fresh instance: " + entrypoint);
   } else {
     logger.error(error);
@@ -29,14 +29,14 @@ try {
   }
 }
 
-const app = createApiApplication(board, () => {
+const app = createApiApplication(wtdn, () => {
   return ["Hello!", true];
 });
 
 const persistInterval = ~~(Deno.env.get("ATOMS_PERSIST_INTERVAL") || "300_000");
 
 setInterval(async () => {
-  await persist(board);
+  await persist(wtdn);
 }, persistInterval);
 
 const abortController = new AbortController();
@@ -55,7 +55,7 @@ ProcessManager.create(
     },
     async () => {
       logger.log("Persisting data");
-      await persist(board);
+      await persist(wtdn);
     },
   ],
   abortController,

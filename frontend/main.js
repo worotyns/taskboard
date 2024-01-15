@@ -32,6 +32,7 @@ function app() {
 
       api("/api/tasks", "POST", { description }).then(() => {
         this.getAll();
+        this.description = "";
       });
     },
     archive(task) {

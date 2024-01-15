@@ -29,8 +29,6 @@ export function createRouter(
   };
 
   const resolveUserAndSetResponseHeader = (context: Context) => {
-    context.response.headers.set('x-user', 'mati')
-    return 'mati';
     const cfHeader = context.request.headers.get("CF_Authorization");
     const [_alg, content, _sig] = cfHeader?.split(".") || [];
     

@@ -66,8 +66,9 @@ export function createRouter(
       board.addTask(
         Task.create(body.description, user),
       );
-
+      
       context.response.status = 200;
+      await persistCallback();
     })
     .get("/api/tasks/assign", async (context) => {
       const user = await resolveUserAndSetResponseHeader(context);
